@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clock Customizer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #2c3e50, #3498db);
+      color: #fff;
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 20px 40px;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #ecf0f1;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .selectors {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .selectors label {
+      font-weight: bold;
+    }
+
+    select {
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    .clock-preview {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .digital-clock {
+      font-size: 3rem;
+      font-weight: bold;
+      padding: 20px 40px;
+      background-color: #00000088;
+      border-radius: 10px;
+    }
+
+    .analog-clock {
+      position: relative;
+      border: 8px solid white;
+      border-radius: 50%;
+      background: #ecf0f1;
+    }
+
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      background: #2c3e50;
+      border-radius: 6px;
+    }
+
+    .hour {
+      width: 6px;
+      height: 25%;
+    }
+
+    .minute {
+      width: 4px;
+      height: 35%;
+    }
+
+    .second {
+      width: 2px;
+      height: 45%;
+      background: red;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #bdc3c7;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Clock Customizer</h1>
+    <p>Create your perfect clock – choose style, size, and see it live!</p>
+  </header>
+
+  <div class="container">
+    <div class="selectors">
+      <div>
+        <label for="clockType">Clock Type</label>
+        <select id="clockType">
+          <option value="digital">Digital</option>
+          <option value="analog">Analog</option>
+        </select>
+      </div>
+      <div>
+        <label for="clockSize">Clock Size</label>
+        <select id="clockSize">
+          <option value="150">Small</option>
+          <option value="250">Medium</option>
+          <option value="350">Large</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="clock-preview" id="clockPreview">
+      <!-- Clock appears here -->
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Clock Customizer Inc. All rights reserved.
+  </footer>
+
+  <script>
+    const clockPreview = document.getElementById('clockPreview');
+    const clockTypeSelect = document.getElementById('clockType');
+    const clockSizeSelect = document.getElementById('clockSize');
+
+    function updateClock() {
+      const type = clockTypeSelect.value;
+      const size = parseInt(clockSizeSelect.value);
+
+      clockPreview.innerHTML = '';
+
+      if (type === 'digital') {
+        const clock = document.createElement('div');
+        clock.className = 'digital-clock';
+        clockPreview.appendChild(clock);
+
+        function updateDigital() {
+          const now = new Date();
+          clock.textContent = now.toLocaleTimeString();
+        }
+
+        updateDigital();
+        setInterval(updateDigital, 1000);
+      } else if (type === 'analog') {
+        const clock = document.createElement('div');
+        clock.className = 'analog-clock';
+        clock.style.width = size + 'px';
+        clock.style.height = size + 'px';
+
+        const hourHand = document.createElement('div');
+        const minuteHand = document.createElement('div');
+        const secondHand = document.createElement('div');
+
+        hourHand.className = 'hand hour';
+        minuteHand.className = 'hand minute';
+        secondHand.className = 'hand second';
+
+        clock.appendChild(hourHand);
+        clock.appendChild(minuteHand);
+        clock.appendChild(secondHand);
+
+        clockPreview.appendChild(clock);
+
+        function updateAnalog() {
+          const now = new Date();
+          const sec = now.getSeconds();
+          const min = now.getMinutes();
+          const hr = now.getHours();
+
+          secondHand.style.transform = `rotate(${sec * 6}deg) translateX(-50%)`;
+          minuteHand.style.transform = `rotate(${min * 6 + sec * 0.1}deg) translateX(-50%)`;
+          hourHand.style.transform = `rotate(${(hr % 12) * 30 + min * 0.5}deg) translateX(-50%)`;
+        }
+
+        updateAnalog();
+        setInterval(updateAnalog, 1000);
+      }
+    }
+
+    clockTypeSelect.addEventListener('change', updateClock);
+    clockSizeSelect.addEventListener('change', updateClock);
+
+    updateClock(); // Initial render
+  </script>
+</body>
+</html>
